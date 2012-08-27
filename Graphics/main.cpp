@@ -31,9 +31,9 @@ int img[] = {
 0,	0,	0,	0,	0,	1,	1,	1,	1,	2,	0,	0,	0,	0,	0,	0,	2,	2,	0,	0,
 0,	0,	0,	0,	2,	1,	1,	1,	1,	1,	2,	0,	0,	0,	0,	2,	1,	2,	0,	0,
 0,	0,	0,	2,	1,	1,	1,	1,	1,	1,	1,	2,	0,	0,	2,	1,	1,	0,	0,	0,
-0,	0,	2,	1,	1,	3,	3,	1,	1,	1,	1,	1,	2,	2,	1,	1,	2,	0,	0,	0,
-0,	2,	1,	1,	1,	3,	3,	1,	1,	1,	1,	1,	1,	1,	1,	2,	0,	0,	0,	0,
-2,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	2,	0,	0,	0,	0,	0,
+0,	0,	2,	1,	1,	3,	3,	3,	1,	1,	1,	1,	2,	2,	1,	1,	2,	0,	0,	0,
+0,	2,	1,	1,	1,	3,	5,	3,	1,	1,	1,	1,	1,	1,	1,	2,	0,	0,	0,	0,
+2,	1,	1,	1,	1,	3,	3,	3,	1,	1,	1,	1,	1,	1,	2,	0,	0,	0,	0,	0,
 2,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	2,	0,	0,	0,	0,	0,
 0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	2,	0,	0,	0,	0,
 0,	2,	2,	1,	1,	1,	1,	1,	1,	1,	1,	1,	2,	2,	1,	1,	2,	0,	0,	0,
@@ -58,14 +58,17 @@ int main(int argc, char *argv[])
     image.load(img);
     
     
-    image.createHistogram();
-    image.setPaletteMaxColors(2);
-    image.createPalette();
-    image.applyPalette();
+    //image.createHistogram();
+    //image.showHistogram();
+    //image.setPaletteMaxColors(2);
+    //image.createPalette();
+    //image.applyPalette();
+    
+    image.resize(20,30);
     
     image.draw();
     
-           
+               
     system("PAUSE");
     closegraph();
     return EXIT_SUCCESS;

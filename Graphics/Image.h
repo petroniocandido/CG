@@ -45,6 +45,10 @@ struct CompareHistogramEntry
       int paletteMaxColors;   
       
       int findPalette(int color);   
+      void increaseWidth(int dw);
+      void increaseHeight(int dh);
+      //void decreaseWidth(int dw);
+      //void decreaseHeight(int dh);
    public:
       Image(int h, int w);
       ~Image();
@@ -59,6 +63,7 @@ struct CompareHistogramEntry
       int getWidth();
       void draw();
       void load(int *bmp);
+      void resize(int neww, int newh);
    };
 
 
