@@ -29,13 +29,13 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // Inicializa o modo gráfico
-    initwindow(200,200); //open a 400x300 graphics window
+    initwindow(400,400); //open a 400x300 graphics window
     
     // Move o cursor gráfico para o pixel [0,0]
-    moveto(0,0);  
+    moveto(100,100);  
     
-    Image image(100,100);
-    image.load(peixe100x100);
+    Image image(94,121);
+    image.load(monalisa121x94);
     
     
     //image.createHistogram();
@@ -44,9 +44,9 @@ int main(int argc, char *argv[])
     //image.createPalette();
     //image.applyPalette();
     
-    //image.resize(100,100);
+    image.resize(188,121);
     
-    image.resize(40,40);
+//    image.resize(40,40);
     
     image.draw();
 

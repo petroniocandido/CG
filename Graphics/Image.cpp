@@ -177,7 +177,7 @@ void Image::applyPalette() {
       usingPalette = true;
 }
 
-void Image::resize(int neww, int newh) {
+void Image::resize(int newh, int neww ) {
       if(neww > width)
            increaseWidth(neww);              
       else 
