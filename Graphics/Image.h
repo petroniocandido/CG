@@ -44,10 +44,11 @@ struct CompareHistogramEntry
       bool usingPalette;
       int paletteMaxColors;   
       
+      void replacePixels(int *tmppixels);
       int findPalette(int color);   
       void increaseWidth(int dw);
       void increaseHeight(int dh);
-      //void decreaseWidth(int dw);
+      void decreaseWidth(int dw);
       //void decreaseHeight(int dh);
    public:
       Image(int h, int w);

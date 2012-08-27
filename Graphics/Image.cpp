@@ -172,12 +172,11 @@ void Image::applyPalette() {
 }
 
 void Image::resize(int neww, int newh) {
-      if(neww > width){
-              increaseWidth(neww);
-              
-      } else { 
-              
-      }
+      if(neww > width)
+           increaseWidth(neww);              
+      else 
+           decreaseWidth(neww);        
+      
       
       if(newh > height){
               increaseHeight(newh);              
@@ -246,6 +245,12 @@ void Image::increaseAxis(int newAxis, int oldAxis, int otherAxis){
 }
 */
 
+void Image::replacePixels(int *tmppixels){
+     int *tmp = pixels;
+     pixels = tmppixels;
+     delete tmp;
+}
+
 void Image::increaseWidth(int neww){
      int dw = neww / width;              // Taxa entre o valor antigo e o novo
      int pw = width / (neww - width);    // 
@@ -270,22 +275,21 @@ void Image::increaseWidth(int neww){
                     }
             }
       }
-      pixels = tmppixels;
+      replacePixels(tmppixels);
       width = neww;
 }
 
 void Image::increaseHeight(int neww){
      
      int mod = neww % height;
-     int copia = height / mod;
+     int copia = mod > 0 ? height / mod : 0;
      int repete = (neww - mod) / height;
      
-     //int dw = neww / height;              // Taxa entre o valor antigo e o novo
-     //int pw = width / (neww - height);    // 
      int *tmppixels = new int[neww*width]; // Novo buffer para conter os pixels da imagem
      int newy = 0;
      for(int countY = 0; countY < height; countY++){
-            int inc = (countY % copia) == 0 ? 1 : 0;
+            int inc = 0;
+            if(copia > 0) inc = (countY % copia) == 0 ? 1 : 0;
             for(int rep = 0; rep < repete+inc; rep++){
                 for(int countX = 0; countX < width; countX++){
                         int index_pixel = countY*width+countX;
@@ -296,8 +300,31 @@ void Image::increaseHeight(int neww){
                 newy++;
             }
       }
-      pixels = tmppixels;
+      replacePixels(tmppixels);
       height = neww;
 }
 
-
+void Image::decreaseWidth(int neww){
+     int mod = width % neww ;
+     int copia = mod > 0 ? width / mod : 0;               // Sempre parte do pressuposto que neww != width
+     int repete = (width - mod) / neww;
+     
+     int *tmppixels = new int[neww*height]; // Novo buffer para conter os pixels da imagem
+     
+     for(int countY = 0; countY < height; countY++){
+            for(int countX = 0; countX < neww; countX++){
+                    int avg = 0;
+                    for(int count = 0; count < repete; count++){
+                            int index_pixel = countY*width+(countX*repete)+count;
+                            int color = pixels[index_pixel];
+                            avg += color;
+                    }
+                    int newindex = countY*neww+countX;
+                    tmppixels[newindex] = avg/repete;
+            }
+            
+      }
+     
+     replacePixels(tmppixels);
+     width = neww;
+}

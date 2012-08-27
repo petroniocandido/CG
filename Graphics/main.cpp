@@ -64,7 +64,9 @@ int main(int argc, char *argv[])
     //image.createPalette();
     //image.applyPalette();
     
-    image.resize(20,30);
+    image.resize(80,80);
+    
+    image.resize(40,80);
     
     image.draw();
     
