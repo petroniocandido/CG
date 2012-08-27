@@ -359,3 +359,26 @@ void Image::decreaseHeight(int neww){
      replacePixels(tmppixels);
      height = neww;
 }
+
+void Image::applyFilter(int radix, int *map){
+     for(int countY = 0; countY < height; countY++){
+            for(int countX = 0; countX < width; countX++){
+                    int avg = 0, count = 0;
+                    int index_pixel = countY*width+countX;
+                    
+                    int index_map = 0;
+                    for(int ry = countY - radix; ry <= countY + radix; ry++)
+                            for(int rx = countX - radix; rx <= countX + radix; rx++){
+                                if(rx >= 0 && rx < width && ry >= 0 && ry < height){
+                                      avg += pixels[ry*width+rx]* map[index_map];
+                                      count += abs(map[index_map]);
+                                }
+                                index_map++;
+                            }
+                    int color = avg/count;
+                    pixels[index_pixel] = color;
+            }
+            
+      }
+}
+

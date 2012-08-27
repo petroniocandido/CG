@@ -67,6 +67,7 @@ struct CompareHistogramEntry
       void dump();
       void load(int *bmp);
       void resize(int neww, int newh);
+      void applyFilter(int radix, int *map);
       //void blur();
       //void sharpen();
    };
