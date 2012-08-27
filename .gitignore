@@ -10,3 +10,5 @@
 *.lai
 *.la
 *.a
+/Graphics/ComputacaoGrafica.exe
+/Graphics/main.c

@@ -49,7 +49,8 @@ struct CompareHistogramEntry
       void increaseWidth(int dw);
       void increaseHeight(int dh);
       void decreaseWidth(int dw);
-      //void decreaseHeight(int dh);
+      void decreaseHeight(int dh);
+      
    public:
       Image(int h, int w);
       ~Image();
@@ -63,8 +64,11 @@ struct CompareHistogramEntry
       int getHeight();
       int getWidth();
       void draw();
+      void dump();
       void load(int *bmp);
       void resize(int neww, int newh);
+      //void blur();
+      //void sharpen();
    };
 
 

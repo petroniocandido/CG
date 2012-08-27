@@ -66,6 +66,12 @@ void Image::draw() {
                     putpixel(countX, countY, color);
             }
 }
+void Image::dump() {
+     for(int count = 0; count < height*width; count++){
+                    int color = (usingPalette)? palette[pixels[count]] : pixels[count];
+                    cout << color << ",";
+            }
+}
 
 void Image::load(int *bmp) {
      for(int countY = 0; countY < height; countY++)
@@ -178,11 +184,11 @@ void Image::resize(int neww, int newh) {
            decreaseWidth(neww);        
       
       
-      if(newh > height){
-              increaseHeight(newh);              
-      } else {
-             
-      }      
+      if(newh > height)
+            increaseHeight(newh);              
+      else 
+            decreaseHeight(newh);       
+            
 }
 
 // Loop no primeiro eixo
@@ -327,4 +333,29 @@ void Image::decreaseWidth(int neww){
      
      replacePixels(tmppixels);
      width = neww;
+}
+
+void Image::decreaseHeight(int neww){
+     int mod = height % neww ;
+     int copia = mod > 0 ? height / mod : 0;               // Sempre parte do pressuposto que neww != width
+     int repete = (height - mod) / neww;
+     
+     int *tmppixels = new int[neww*width]; // Novo buffer para conter os pixels da imagem
+     
+     for(int countY = 0; countY < neww; countY++){
+            for(int countX = 0; countX < width; countX++){
+                    int avg = 0;
+                    for(int count = 0; count < repete; count++){
+                            int index_pixel = ((countY*repete)+count)*width+countX;
+                            int color = pixels[index_pixel];
+                            avg += color;
+                    }
+                    int newindex = countY*width+countX;
+                    tmppixels[newindex] = avg/repete;
+            }
+            
+      }
+     
+     replacePixels(tmppixels);
+     height = neww;
 }
