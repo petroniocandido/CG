@@ -361,6 +361,7 @@ void Image::decreaseHeight(int neww){
 }
 
 void Image::applyFilter(int radix, int *map){
+     int *tmppixels = new int[height*width];
      for(int countY = 0; countY < height; countY++){
             for(int countX = 0; countX < width; countX++){
                     int avg = 0, count = 0;
@@ -376,9 +377,19 @@ void Image::applyFilter(int radix, int *map){
                                 index_map++;
                             }
                     int color = avg/count;
-                    pixels[index_pixel] = color;
+                    tmppixels[index_pixel] = color;
             }
             
       }
+      replacePixels(tmppixels);
 }
 
+void Image::blur(){
+     int map[] =  {1, 1, 1, 1, 8, 1, 1, 1, 1};
+      applyFilter(1, map );
+}
+
+void Image::sharpen(){
+      int map[] =  {-1, -1, -1, -1, 27, -1, -1, -1, -1};
+      applyFilter(1, map );
+}

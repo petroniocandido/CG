@@ -19,76 +19,24 @@
 #include <cstdlib>
 #include <iostream>
 #include <graphics.h>
+#include <dos.h>
+#include <io.h>
+#include <fcntl.h>
 #include "Image.h"
 #include "bitmaps.h"
+//#include "VGA.h"
+
+
 
 using namespace std;
 
-/************************************************************
-
- *  Inicializa o modo VGA/SVGA.										*
-
- ************************************************************/
-
-void InitVGA(void)
-
-{
-
-	int  Gd, Gm;
-
-	char GrErr;
-
-
-
-	Gd=installuserdriver("svga256",NULL); Gm=0;
-
-
-
-	/* A variavel Gm deve assumir um dos seguintes valores, de acordo com
-
-		a resolucao desejada:
-
-
-
-		0. 320x200x256
-
-		1. 640x400x256
-
-		2. 640x480x256
-
-		3. 800x600x256
-
-		4. 1024x768x256
-
-		5. 640x350x256
-
-		6. 1280x1024x256 */
-
-
-
-	initgraph(&Gd,&Gm,"");
-
-
-
-	GrErr = graphresult();
-
-	if (GrErr != grOk) {
-
-	  printf("Erro grafico: %s\n",grapherrormsg(GrErr));
-
-	  exit(1);
-
-	}
-
-}
 
 
 int main(int argc, char *argv[])
 {
-    // Inicializa o modo gráfico
-    //initwindow(400,400); //open a 400x300 graphics window
     
-    InitVGA();
+    // Inicializa o modo gráfico
+    initwindow(400,400); //open a 400x300 graphics window
     
     // Move o cursor gráfico para o pixel [0,0]
     moveto(100,100);  
@@ -105,11 +53,9 @@ int main(int argc, char *argv[])
     
 //    image.resize(188,121);
     
-//    image.resize(40,40);
-      int mapA[] =  {1, 1, 1, 1, 0, 1, 1, 1, 1};
-      int mapB[] =  {0, 0, 0, 0, 1, 0, 0, 0, 0};
-      int mapC[] =  {-1, -1, -1, -1, 8, -1, -1, -1, -1};
-    //  image.applyFilter(1, mapA );
+    image.resize(200,200);
+    
+    image.blur();  
     
     image.draw();
 
@@ -119,4 +65,5 @@ int main(int argc, char *argv[])
     system("PAUSE");
     closegraph();
     return EXIT_SUCCESS;
+    
 }

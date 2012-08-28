@@ -11,8 +11,8 @@ LIBS =  -L"D:/Dev-Cpp/lib" -lbgi  -lgdi32  -lcomdlg32  -luuid  -loleaut32  -lole
 INCS =  -I"D:/Dev-Cpp/include" 
 CXXINCS =  -I"D:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"D:/Dev-Cpp/include/c++/3.4.2/backward"  -I"D:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"D:/Dev-Cpp/include/c++/3.4.2"  -I"D:/Dev-Cpp/include" 
 BIN  = ComputacaoGrafica.exe
-CXXFLAGS = $(CXXINCS)   -g3
-CFLAGS = $(INCS)   -g3
+CXXFLAGS = $(CXXINCS)   -ansi -traditional-cpp -g3
+CFLAGS = $(INCS)   -ansi -traditional-cpp -g3
 RM = rm -f
 
 .PHONY: all all-before all-after clean clean-custom

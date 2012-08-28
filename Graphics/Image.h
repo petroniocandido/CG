@@ -50,7 +50,7 @@ struct CompareHistogramEntry
       void increaseHeight(int dh);
       void decreaseWidth(int dw);
       void decreaseHeight(int dh);
-      
+      void applyFilter(int radix, int *map);
    public:
       Image(int h, int w);
       ~Image();
@@ -67,9 +67,8 @@ struct CompareHistogramEntry
       void dump();
       void load(int *bmp);
       void resize(int neww, int newh);
-      void applyFilter(int radix, int *map);
-      //void blur();
-      //void sharpen();
+      void blur();
+      void sharpen();
    };
 
 
