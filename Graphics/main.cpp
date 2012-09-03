@@ -41,29 +41,28 @@ int main(int argc, char *argv[])
     // Move o cursor gráfico para o pixel [0,0]
     moveto(100,100);  
     
-    Image image(100,100);
-    image.load(peixe100x100);
-    
-    
-    //image.createHistogram();
-    //image.showHistogram();
-    //image.setPaletteMaxColors(2);
-    //image.createPalette();
-    //image.applyPalette();
-    
-//    image.resize(188,121);
-    
-    image.resize(200,200);
+    Image image(94,120);
+    image.load(monalisa94x120);
+        
+    image.resize(282,240);
     
     image.blur();  
-    
+
+/*    
+    image.createHistogram();
+    image.createPalette();
+    image.applyPalette();
+*/    
     image.draw();
 
       //image.dump();
     
-               
     system("PAUSE");
+    
     closegraph();
+         
+    
+    
     return EXIT_SUCCESS;
     
 }

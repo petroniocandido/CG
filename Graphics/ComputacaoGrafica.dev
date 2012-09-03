@@ -1,7 +1,7 @@
 [Project]
 FileName=ComputacaoGrafica.dev
 Name=ComputacaoGrafica
-UnitCount=6
+UnitCount=7
 Type=1
 Ver=1
 ObjFiles=
@@ -108,9 +108,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit7]
-FileName=svgabg55\SVGA64K.H
+FileName=geometry.cpp
 CompileCpp=1
-Folder=ComputacaoGrafica
+Folder=
 Compile=1
 Link=1
 Priority=1000

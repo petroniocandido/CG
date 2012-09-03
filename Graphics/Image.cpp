@@ -40,6 +40,8 @@ Image::Image(int h, int w)
 
 Image::~Image() {
      delete [] pixels;
+     delete &histogram;  
+     delete [] palette;
 }
 
 int Image::getHeight() {
@@ -191,66 +193,6 @@ void Image::resize(int newh, int neww ) {
             
 }
 
-// Loop no primeiro eixo
-// Identifica o eixo transversal que irá se repetir
-// Copia a coluna inteira de uma vez
-/*
-void Image::increaseAxis(int newAxis, int oldAxis, int otherAxis){
-     
-     int mod = newAxis % oldAxis;
-     int copia = oldAxis / mod;
-     int repete = (newAxis - mod) / oldAxis;
-     
-     int *tmppixels = new int[newAxis*otherAxis]; // Novo buffer para conter os pixels da imagem
-     int newpixels = 0;
-     
-     // Política de cópia de eixos
-     // se dw > pw = todo eixo será copiado dw vezes
-     // se dw < pw = um em cada pw eixos será copiado
-     
-     // O contra eixo é uma dimensão que não é modificada
-     for(int countOtherAxis = 0; countOtherAxis < otherAxis; countOtherAxis++){
-             // Decide como eixo oposto será copiado
-             
-             int inc = (countOtherAxis % copia) == 0 ? 1 : 0;
-                          
-             for(int rep = repete + inc; rep >= 0; rep--){ 
-             
-                     for(int countOldAxis = 0; countOldAxis < oldAxis; countOldAxis++){
-                             
-                             // Calcula a coordenada na imagem original
-                             
-                             int index_pixel = countOtherAxis*oldAxis+countOldAxis;
-                             int color = pixels[index_pixel];        
-                             
-                             // Calcula a coordenada na nova imagem
-                             
-                             int initial = ;
-                             
-                             tmppixels[initial + (dw - n)] = color;
-                     }
-             }
-                    
-                    
-                    
-                    if(dw > pw) {
-                        
-                        for(int n = dw; n >= 0; n--) {
-                                 
-                        }
-                    } else {
-                        tmppixels[index_pixel+newpixels] = color;
-                        if(index_pixel % 2 == 0) {
-                             newpixels++;
-                             tmppixels[index_pixel+newpixels] = color; 
-                        }   
-                    }
-            }
-      }
-      pixels = tmppixels;
-}
-*/
-
 void Image::replacePixels(int *tmppixels){
      int *tmp = pixels;
      pixels = tmppixels;
@@ -258,27 +200,24 @@ void Image::replacePixels(int *tmppixels){
 }
 
 void Image::increaseWidth(int neww){
-     int dw = neww / width;              // Taxa entre o valor antigo e o novo
-     int pw = width / (neww - width);    // 
+     
+     int mod = neww % width;
+     int copia = mod > 0 ? width / mod : 0;
+     int repete = (neww - mod) / width;
+     
      int *tmppixels = new int[neww*height]; // Novo buffer para conter os pixels da imagem
-     int newpixels = 0;
-     for(int countY = 0; countY < height; countY++){
-            for(int countX = 0; countX < width; countX++){
-                    int index_pixel = countY*width+countX;
-                    int color = pixels[index_pixel];
-                    
-                    if(dw > pw) {
-                        int initial = index_pixel * dw - (dw-1);
-                        for(int n = dw; n >= 0; n--) {
-                                tmppixels[initial + (dw - n)] = color; 
-                        }
-                    } else {
-                        tmppixels[index_pixel+newpixels] = color;
-                        if(index_pixel % 2 == 0) {
-                             newpixels++;
-                             tmppixels[index_pixel+newpixels] = color; 
-                        }   
-                    }
+     int newx = 0;
+     for(int countX = 0; countX < width; countX++){
+            int inc = 0;
+            if(copia > 0) inc = (countX % copia) == 0 ? 1 : 0;
+            for(int rep = 0; rep < repete+inc; rep++){
+                for(int countY = 0; countY < height; countY++){
+                        int index_pixel = countY*width+countX;
+                        int color = pixels[index_pixel];
+                        int newindex = countY*neww+newx;
+                        tmppixels[newindex] = color;
+                }
+                newx++;
             }
       }
       replacePixels(tmppixels);
@@ -386,7 +325,14 @@ void Image::applyFilter(int radix, int *map){
 
 void Image::blur(){
      int map[] =  {1, 1, 1, 1, 8, 1, 1, 1, 1};
-      applyFilter(1, map );
+     applyFilter(1, map );
+     /*int map[] =  { 1, 1, 1, 1, 1,
+                    1, 3, 3, 3, 1,
+                    1, 3, 20, 3, 1,
+                    1, 3, 3, 3, 1,
+                    1, 1, 1, 1, 1,};
+     applyFilter(2, map );
+     */
 }
 
 void Image::sharpen(){
