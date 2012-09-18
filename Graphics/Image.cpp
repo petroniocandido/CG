@@ -43,15 +43,15 @@ Image::~Image() {
      delete &histogram;  
      delete [] palette;
 }
-
+/*
 int Image::getHeight() {
-     return height;
+     return this->height;
 }
 
-int Image::getWidth() {
-     return width;
+int Image::getWidth() 
+     return this->width;
 }
-
+*/
 void Image::setPixel(int x, int y, int color) {
      pixels[y*width + x] = color;
 }
@@ -68,6 +68,16 @@ void Image::draw() {
                     putpixel(countX, countY, color);
             }
 }
+
+void Image::draw(int x, int y) {
+     for(int countY = 0; countY < height; countY++)
+            for(int countX = 0; countX < width; countX++){
+                    int index_pixel = countY*width+countX;
+                    int color = (usingPalette)? palette[pixels[index_pixel]] : pixels[index_pixel];
+                    putpixel(x + countX, y + countY, color);
+            }
+}
+
 void Image::dump() {
      for(int count = 0; count < height*width; count++){
                     int color = (usingPalette)? palette[pixels[count]] : pixels[count];
@@ -324,15 +334,16 @@ void Image::applyFilter(int radix, int *map){
 }
 
 void Image::blur(){
-     int map[] =  {1, 1, 1, 1, 8, 1, 1, 1, 1};
+     /*int map[] =  {1, 1, 1, 1, 8, 1, 1, 1, 1};
      applyFilter(1, map );
-     /*int map[] =  { 1, 1, 1, 1, 1,
+     */
+     int map[] =  { 1, 1, 1, 1, 1,
                     1, 3, 3, 3, 1,
                     1, 3, 20, 3, 1,
                     1, 3, 3, 3, 1,
                     1, 1, 1, 1, 1,};
      applyFilter(2, map );
-     */
+     
 }
 
 void Image::sharpen(){

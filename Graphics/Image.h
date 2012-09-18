@@ -61,9 +61,10 @@ struct CompareHistogramEntry
       void createPalette();
       void applyPalette();
       void setPaletteMaxColors(int m);
-      int getHeight();
-      int getWidth();
+//      int getHeight();
+//      int getWidth();
       void draw();
+      void draw(int x, int y);
       void dump();
       void load(int *bmp);
       void resize(int neww, int newh);

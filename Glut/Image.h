@@ -16,55 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  
-#include <cstdlib>
-#include <iostream>
-#include <graphics.h>
-#include <dos.h>
-#include <io.h>
-#include <fcntl.h>
-#include "Image.h"
-#include "bitmaps.h"
-//#include "VGA.h"
 
-
+#include <GL\glut.h>
 
 using namespace std;
 
+ class Image 
+   {
+   private:
+      float *pixels; 
+      int height, width;
+      
+      void replacePixels(Image img);
+      float getPixel(int x, int y, int color);
+   public:
+      Image(int h, int w);
+      Image(char * );
+      ~Image();
+      void setPixel(int x, int y, float r, float g, float b);
+      float getPixelR(int x, int y);
+      float getPixelG(int x, int y);
+      float getPixelB(int x, int y);
+      void load();
+      void draw();
+      void draw(int x, int y);
+      Image applyFilter(int radix, int *map);
+      Image blur();
+      Image sharpen();
+   };
 
 
-int main(int argc, char *argv[])
-{
-    
-    // Inicializa o modo gráfico
-    initwindow(500,500); //open a 400x300 graphics window
-    
-    // Move o cursor gráfico para o pixel [0,0]
-    moveto(100,100);  
-    
-    Image image(94,120);
-    image.load(monalisa94x120);
-        
-   image.resize(282,240);
-    
-    image.draw(0,0);
-    
-   image.sharpen();  
-
-/*    
-    image.createHistogram();
-    image.createPalette();
-    image.applyPalette();
-*/    
-    image.draw(260,0);
-
-      //image.dump();
-    
-    system("PAUSE");
-    
-    closegraph();
-         
-    
-    
-    return EXIT_SUCCESS;
-    
-}
