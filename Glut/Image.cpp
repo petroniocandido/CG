@@ -20,6 +20,7 @@
 #include "Image.h"
 #include "Bitmap.h"
 #include <math.h>
+#include <string.h>
 
 using namespace std;
 
@@ -27,27 +28,28 @@ Image::Image(int h, int w)
  {
      this->height = h;
      this->width = w;
-     this->pixels = new float[h*w*3];
+     this->size = this->height*this->width*3;
+     pixels = new float[size];
 }
 
 Image::~Image() {
      delete [] pixels;
 }
-void Image::setPixel(int px, int py,float r,float g, float b) {
-     int index = (py*this->width + px)*3;
+void Image::setPixel(int px, int py ,float r,float g, float b) {
+     int index = (py*width + px)*3;
      pixels[index] = r;
      pixels[index+1] = g;
      pixels[index+2] = b;
 }
 
 void Image::replacePixels(Image img){
-     float *tmp = pixels;
-     pixels = img.pixels;
- //    delete tmp;
+
+
 }
 
-float Image::getPixel(int x, int y, int color) {
-     return pixels[y*width + x + color];
+float Image::getPixel(int px, int py, int color) {
+      long index = (py*width + px)*3 + color;
+      return pixels[index];
 }
 
 float Image::getPixelR(int x, int y) {
@@ -67,8 +69,11 @@ void Image::draw() {
 }
 
 void Image::draw(int x, int y) {
-    glRasterPos2i(x,y);
-    glDrawPixels(this->width,this->height,GL_RGB,GL_FLOAT,this->pixels);
+//    glRasterPos2i(x,y);
+glRasterPos2d(-1,-0.4); // ponto esquerdo mais baixo
+glPixelZoom(1,1);
+glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // alinhamento
+    glDrawPixels(this->width+1,this->height,GL_RGB,GL_FLOAT,this->pixels);
 }
 
 Image::Image(char * path) {
@@ -76,25 +81,37 @@ Image::Image(char * path) {
     long size = bmp.height * bmp.width * 3;
     pixels = new float[size];
     this->height = bmp.height;
-    this->width = bmp.width+1;
-    for(long i = 0; i < size; i++) {
+    this->width = bmp.width;
+    /*for(long i = 1; i < size; i++) {
             float orig = (float)bmp.data[i];
             float color =  orig / (float)256  ;
             if(color <= 0){
                     color = 1-color;
-            }
-                    
+            }                    
             pixels[i] = color;
+    }*/
+    
+    for(long y = 0; y < this->height; y++)
+      for(long x = 0; x < this->width; x++) 
+            for(int i = 0; i < 3; i++) {
+                long index = (y * width + x ) * 3 + i;
+                float orig = (float)bmp.data[index];
+                float color =  orig / (float)256  ;
+                if(color <= 0){
+                        color = 1-color;
+                }
+                
+                pixels[index] = color;
     }
     
 }
 
 Image Image::applyFilter(int radix, int *map){
      
-     Image nova(this->height,this->width);
+     Image nova(height,width);
      
-     for(int countY = 0; countY < this->height; countY++){
-            for(int countX = 0; countX < this->width; countX++){
+     for(int countY = 0; countY < height; countY++){
+            for(int countX = 0; countX < width; countX++){
                     float avgR = 0,  avgG = 0, avgB = 0;
                     int count = 0;
                     
@@ -102,9 +119,9 @@ Image Image::applyFilter(int radix, int *map){
                     for(int ry = countY - radix; ry <= countY + radix; ry++)
                             for(int rx = countX - radix; rx <= countX + radix; rx++){
                                 if(rx >= 0 && rx < width && ry >= 0 && ry < height){
-                                      avgR += getPixelR(ry,rx)* map[index_map];
-                                      avgG += getPixelG(ry,rx)* map[index_map];
-                                      avgB += getPixelB(ry,rx)* map[index_map];                                      
+                                      avgR += getPixelR(rx,ry)* map[index_map];
+                                      avgG += getPixelG(rx,ry)* map[index_map];
+                                      avgB += getPixelB(rx,ry)* map[index_map];                                      
                                       
                                       count += abs(map[index_map]);
                                 }
@@ -115,9 +132,12 @@ Image Image::applyFilter(int radix, int *map){
                     float b = avgB/(float)count;
 
                     nova.setPixel(countX, countY, r, g, b);
+                    
             }
             
       }
+      
+    //  replacePixels(nova);
       
       return nova;
 }
@@ -134,4 +154,133 @@ Image Image::blur(){
 Image Image::sharpen(){
       int map[] =  {-1, -1, -1, -1, 27, -1, -1, -1, -1};
       return applyFilter(1, map );
+}
+
+Image Image::resize(int newh, int neww ) {
+      Image tmp = *this;
+      if(neww > width)
+           tmp = tmp.increaseWidth(neww);               
+      else 
+           tmp = tmp.decreaseWidth(neww);        
+      
+      
+      if(newh > height)
+            tmp = tmp.increaseHeight(newh);              
+      else 
+            tmp = tmp.decreaseHeight(newh);       
+            
+      return tmp;
+            
+}
+
+Image Image::increaseWidth(int neww){
+     
+     int mod = neww % width;
+     int copia = mod > 0 ? width / mod : 0;
+     int repete = (neww - mod) / width;
+     
+     Image nova(height,neww);
+     
+     int newx = 0;
+     for(int countX = 0; countX < width; countX++){            
+            int inc = 0;
+            if(copia > 0) inc = (countX % copia) == 0 ? 1 : 0;
+            for(int rep = 0; rep < repete+inc; rep++){
+                for(int countY = 0; countY < height; countY++){
+                        
+                        float r = getPixelR(countX,countY);
+                        float g = getPixelG(countX,countY);
+                        float b = getPixelB(countX,countY);
+                        
+                        nova.setPixel(newx, countY, r, g, b);
+                }
+                newx++;
+            }
+      }
+      
+      return nova;
+}
+
+Image Image::increaseHeight(int neww){
+     
+     int mod = neww % height;
+     int copia = mod > 0 ? height / mod : 0;
+     int repete = (neww - mod) / height;
+     
+     Image nova(neww,width);
+     
+     int newy = 0;
+     for(int countY = 0; countY < height; countY++){
+            int inc = 0;
+            if(copia > 0) inc = (countY % copia) == 0 ? 1 : 0;
+            for(int rep = 0; rep < repete+inc; rep++){
+                for(int countX = 0; countX < width; countX++){
+                        
+                        float r = getPixelR(countX,countY);
+                        float g = getPixelG(countX,countY);
+                        float b = getPixelB(countX,countY);
+                        
+                        nova.setPixel(countX, newy, r, g, b);
+                }
+                newy++;
+            }
+      }
+      
+      return nova;
+}
+
+Image Image::decreaseWidth(int neww){
+     int mod = width % neww ;
+     int copia = mod > 0 ? width / mod : 0;               // Sempre parte do pressuposto que neww != width
+     int repete = (width - mod) / neww;
+     
+      Image nova(height,neww);
+     
+     for(int countY = 0; countY < height; countY++){
+            for(int countX = 0; countX < neww; countX++){
+                    float avgR = 0,  avgG = 0, avgB = 0;
+                    for(int count = 0; count < repete; count++){
+                            avgR += getPixelR(countX*repete+count,countY);
+                            avgG += getPixelG(countX*repete+count,countY);
+                            avgB  += getPixelB(countX*repete+count,countY);
+                                      
+                    }
+                    float r = avgR/repete;
+                    float g = avgG/repete;
+                    float b = avgB/repete;
+
+                    nova.setPixel(countX, countY, r, g, b);
+            }
+            
+      }
+     
+     return nova;
+}
+
+Image Image::decreaseHeight(int neww){
+     int mod = height % neww ;
+     int copia = mod > 0 ? height / mod : 0;               // Sempre parte do pressuposto que neww != width
+     int repete = (height - mod) / neww;
+     
+     Image nova(height,neww);
+     
+     for(int countY = 0; countY < neww; countY++){
+            for(int countX = 0; countX < width; countX++){
+                    float avgR = 0,  avgG = 0, avgB = 0;
+                    for(int count = 0; count < repete; count++){
+                          avgR += getPixelR(countX,countY*repete+count);
+                          avgG += getPixelG(countX,countY*repete+count);
+                          avgB += getPixelB(countX,countY*repete+count);
+                                      
+                    }
+                    float r = avgR/repete;
+                    float g = avgG/repete;
+                    float b = avgB/repete;
+
+                    nova.setPixel(countX, countY, r, g, b);
+            }
+            
+      }
+     
+    return nova;
 }

@@ -25,11 +25,15 @@ using namespace std;
    {
    private:
       float *pixels; 
-      int height, width;
-      
+      int height, width, size;
       void replacePixels(Image img);
-      float getPixel(int x, int y, int color);
    public:
+      float getPixel(int x, int y, int color);
+      Image increaseWidth(int dw);
+      Image increaseHeight(int dh);
+      Image decreaseWidth(int dw);
+      Image decreaseHeight(int dh);
+
       Image(int h, int w);
       Image(char * );
       ~Image();
@@ -43,6 +47,7 @@ using namespace std;
       Image applyFilter(int radix, int *map);
       Image blur();
       Image sharpen();
+      Image resize(int neww, int newh);
    };
 
 
