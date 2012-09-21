@@ -65,7 +65,7 @@ public:
     Bitmap(char *);
     ~Bitmap();
     bool loadBMP(char *);
-private:
+//private:
     //variables
     BitmapFileHeader bmfh;
     BitmapInfoHeader bmih;

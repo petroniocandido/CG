@@ -69,12 +69,28 @@ void Image::draw() {
 }
 
 void Image::draw(int x, int y) {
-//    glRasterPos2i(x,y);
-glRasterPos2d(-1,-0.4); // ponto esquerdo mais baixo
-glPixelZoom(1,1);
-glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // alinhamento
+    int viewport[4]; 
+    glGetIntegerv(GL_VIEWPORT, viewport); 
+    glMatrixMode(GL_PROJECTION); 
+    glPushMatrix(); 
+    glLoadIdentity(); 
+    gluOrtho2D(0, 1200, 0, 800); 
+    glMatrixMode(GL_MODELVIEW); 
+    glLoadIdentity(); 
+  
+    glRasterPos2f(x, this->height);
     glDrawPixels(this->width+1,this->height,GL_RGB,GL_FLOAT,this->pixels);
 }
+
+float adaptColor(char c) {
+    float orig = (float)c;
+    float color =  orig / (float)127 ;
+    if(color <= 0){
+            color = 1-color;
+    }                    
+    return color;
+}
+
 
 Image::Image(char * path) {
     Bitmap bmp(path);
@@ -89,8 +105,24 @@ Image::Image(char * path) {
                     color = 1-color;
             }                    
             pixels[i] = color;
-    }*/
+    }
+    */
+     if(bmp.height>0) {
+        int offset=bmp.padWidth-bmp.byteWidth;
+        //count backwards so you start at the front of the image
+        for(int i=0;i<bmp.dataSize;i+=3) {
+            //jump over the padding at the start of a new line
+            if((i+1)%bmp.padWidth==0) {
+                i+=offset;
+            }
+            //transfer the data
+            pixels[i] = adaptColor(bmp.data[i]);
+            pixels[i+1] = adaptColor(bmp.data[i+1]);
+            pixels[i+2] = adaptColor(bmp.data[i+2]);
+        }
+    }
     
+    /*
     for(long y = 0; y < this->height; y++)
       for(long x = 0; x < this->width; x++) 
             for(int i = 0; i < 3; i++) {
@@ -101,8 +133,10 @@ Image::Image(char * path) {
                         color = 1-color;
                 }
                 
+                bmp.
                 pixels[index] = color;
     }
+    */
     
 }
 
@@ -157,10 +191,10 @@ Image Image::sharpen(){
 }
 
 Image Image::resize(int newh, int neww ) {
-      Image tmp = *this;
+     // Image tmp = *this;
       if(neww > width)
-           tmp = tmp.increaseWidth(neww);               
-      else 
+           return increaseWidth(neww);               
+      /*else 
            tmp = tmp.decreaseWidth(neww);        
       
       
@@ -168,8 +202,8 @@ Image Image::resize(int newh, int neww ) {
             tmp = tmp.increaseHeight(newh);              
       else 
             tmp = tmp.decreaseHeight(newh);       
-            
-      return tmp;
+      */      
+      //return tmp;
             
 }
 

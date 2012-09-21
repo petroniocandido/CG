@@ -26,11 +26,29 @@ static void display(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Image img((char *)"teste.bmp");
-    Image i2 = img.blur(); 
-    i2.draw();  
+    img.draw(0.5,0);
+    
+    /*Image i2 = img.blur(); 
+    i2.draw(240, 106);  
+    
+    Image i3 = img.sharpen();
+    i3.draw(480,106);  
+    */
+    
+    //Image i3 = img.resize(100,534);
+    //i3.draw(0.5,0);
+    
     glutSwapBuffers();
 }
 
+void reshape(int w, int h)
+{
+   glViewport(0, 0, (GLsizei) w, (GLsizei) h);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   glOrtho (0, w, 0, h, -1.0, 1.0);
+   glMatrixMode(GL_MODELVIEW);
+}
 
 /* Program entry point */
 
@@ -38,19 +56,18 @@ int
 main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
-    glutInitWindowSize(640,480);
+    glutInitWindowSize(800,600);
     glutInitWindowPosition(10,10);
 
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-    
-    glViewport(0, 0, 0, 0); 
-    gluOrtho2D(0,0,0,0);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+   
     
     glutCreateWindow("Aula computação gráfica");
 
     glutDisplayFunc(display);
+    
+    
+    //glutReshapeFunc(reshape); 
 
     glutMainLoop();
 
