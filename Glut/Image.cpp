@@ -74,7 +74,7 @@ void Image::draw(int x, int y) {
     glMatrixMode(GL_PROJECTION); 
     glPushMatrix(); 
     glLoadIdentity(); 
-    gluOrtho2D(0, 800, 0, 800); 
+    gluOrtho2D(0, 800, 0, 600); 
     glMatrixMode(GL_MODELVIEW); 
     glLoadIdentity(); 
   
@@ -288,6 +288,70 @@ Image Image::decreaseHeight(int neww){
                     float b = avgB/repete;
 
                     nova.setPixel(countX, countY, r, g, b);
+            }
+            
+      }
+     
+    return nova;
+}
+
+
+Image Image::invert(){
+     
+     Image nova(height,width);
+     
+     for(int countY = 0; countY < height; countY++){
+            for(int countX = 0; countX < width; countX++){
+                    float R = 0,  G = 0, B = 0;
+                    R = 1 - getPixelR(countX,countY);
+                    G = 1 - getPixelG(countX,countY);
+                    B = 1 - getPixelB(countX,countY);
+
+                    nova.setPixel(countX, countY, R, G, B);
+            }
+            
+      }
+     
+    return nova;
+}
+
+Image Image::grayscale(){
+     
+     Image nova(height,width);
+     
+     for(int countY = 0; countY < height; countY++){
+            for(int countX = 0; countX < width; countX++){
+                    float R = 0,  G = 0, B = 0;
+                    R = getPixelR(countX,countY);
+                    G = getPixelG(countX,countY);
+                    B = getPixelB(countX,countY);
+                    
+                    float color = (R + G + B) / 3;
+
+                    nova.setPixel(countX, countY, color, color, color);
+            }
+            
+      }
+     
+    return nova;
+}
+
+Image Image::sepia(){
+     
+     Image nova(height,width);
+     
+     for(int countY = 0; countY < height; countY++){
+            for(int countX = 0; countX < width; countX++){
+                    float R = 0,  G = 0, B = 0;
+                    R = getPixelR(countX,countY);
+                    G = getPixelG(countX,countY);
+                    B = getPixelB(countX,countY);
+                    
+                    float nR = (R * .393) + (G *.769) + (B * .189);
+                    float nG = (R * .349) + (G *.686) + (B * .168);
+                    float nB = (R * .272) + (G *.534) + (B * .131);
+
+                    nova.setPixel(countX, countY, nR, nG, nB);
             }
             
       }

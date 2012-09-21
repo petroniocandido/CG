@@ -28,15 +28,20 @@ static void display(void)
     Image img((char *)"teste.bmp");
     img.draw(0,0);
     
-    Image i2 = img.blur(); 
-    i2.draw(240, 0);  
+    //Image i2 = img.grayscale(); 
+    //i2.draw(240, 0);  
     
-    Image i3 = img.sharpen();
-    i3.draw(480,0);  
+    //Image i3 = img.invert();
+    //i3.draw(480,0);      
     
+    //Image i4 = img.sepia();
+    //i4.draw(480,0);
     
-//    Image i3 = img.resize(100,534);
-//    i3.draw(0,0);
+    Image i5 = img.blur();
+    i5.draw(240,0);
+    
+    Image i6 = img.sharpen();
+    i6.draw(480,0);
     
     glutSwapBuffers();
 }
@@ -56,7 +61,7 @@ int
 main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
-    glutInitWindowSize(800,600);
+    glutInitWindowSize(800,800);
     glutInitWindowPosition(10,10);
 
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);

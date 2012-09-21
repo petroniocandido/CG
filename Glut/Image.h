@@ -48,6 +48,9 @@ using namespace std;
       Image blur();
       Image sharpen();
       Image resize(int neww, int newh);
+      Image invert();
+      Image grayscale();
+      Image sepia();
    };
 
 
