@@ -23,20 +23,20 @@
 
 static void display(void)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  //  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Image img((char *)"teste.bmp");
-    img.draw(0.5,0);
+    img.draw(0,0);
     
-    /*Image i2 = img.blur(); 
-    i2.draw(240, 106);  
+    Image i2 = img.blur(); 
+    i2.draw(240, 0);  
     
     Image i3 = img.sharpen();
-    i3.draw(480,106);  
-    */
+    i3.draw(480,0);  
     
-    //Image i3 = img.resize(100,534);
-    //i3.draw(0.5,0);
+    
+//    Image i3 = img.resize(100,534);
+//    i3.draw(0,0);
     
     glutSwapBuffers();
 }
@@ -60,6 +60,12 @@ main(int argc, char *argv[])
     glutInitWindowPosition(10,10);
 
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+   
+   //glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB );
+   
+    glDisable(GL_DITHER);
+  glClearColor(0.0, 0.0, 0.0, 0.0);
+  glClear(GL_COLOR_BUFFER_BIT);
    
     
     glutCreateWindow("Aula computação gráfica");

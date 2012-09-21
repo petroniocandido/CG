@@ -74,9 +74,11 @@ void Image::draw(int x, int y) {
     glMatrixMode(GL_PROJECTION); 
     glPushMatrix(); 
     glLoadIdentity(); 
-    gluOrtho2D(0, 1200, 0, 800); 
+    gluOrtho2D(0, 800, 0, 800); 
     glMatrixMode(GL_MODELVIEW); 
     glLoadIdentity(); 
+  
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
   
     glRasterPos2f(x, this->height);
     glDrawPixels(this->width+1,this->height,GL_RGB,GL_FLOAT,this->pixels);
@@ -85,9 +87,9 @@ void Image::draw(int x, int y) {
 float adaptColor(char c) {
     float orig = (float)c;
     float color =  orig / (float)127 ;
-    if(color <= 0){
-            color = 1-color;
-    }                    
+    if(color < 0)
+        color = 1-color;
+                     
     return color;
 }
 
@@ -98,45 +100,19 @@ Image::Image(char * path) {
     pixels = new float[size];
     this->height = bmp.height;
     this->width = bmp.width;
-    /*for(long i = 1; i < size; i++) {
-            float orig = (float)bmp.data[i];
-            float color =  orig / (float)256  ;
-            if(color <= 0){
-                    color = 1-color;
-            }                    
-            pixels[i] = color;
-    }
-    */
-     if(bmp.height>0) {
-        int offset=bmp.padWidth-bmp.byteWidth;
-        //count backwards so you start at the front of the image
-        for(int i=0;i<bmp.dataSize;i+=3) {
-            //jump over the padding at the start of a new line
-            if((i+1)%bmp.padWidth==0) {
-                i+=offset;
-            }
-            //transfer the data
-            pixels[i] = adaptColor(bmp.data[i]);
-            pixels[i+1] = adaptColor(bmp.data[i+1]);
-            pixels[i+2] = adaptColor(bmp.data[i+2]);
+
+    int offset=bmp.padWidth-bmp.byteWidth;
+    //count backwards so you start at the front of the image
+    for(int i=0;i<bmp.dataSize;i+=3) {
+        //jump over the padding at the start of a new line
+        if(((i+1)%bmp.padWidth)==0) {
+            i+=offset;
         }
+        //transfer the data
+        pixels[i] = adaptColor(bmp.data[i]);
+        pixels[i+1] = adaptColor(bmp.data[i+1]);
+        pixels[i+2] = adaptColor(bmp.data[i+2]);
     }
-    
-    /*
-    for(long y = 0; y < this->height; y++)
-      for(long x = 0; x < this->width; x++) 
-            for(int i = 0; i < 3; i++) {
-                long index = (y * width + x ) * 3 + i;
-                float orig = (float)bmp.data[index];
-                float color =  orig / (float)256  ;
-                if(color <= 0){
-                        color = 1-color;
-                }
-                
-                bmp.
-                pixels[index] = color;
-    }
-    */
     
 }
 
