@@ -22,21 +22,54 @@
 #include <math.h>
 #include <string.h>
 
+#define _USE_MATH_DEFINES
+
 using namespace std;
 
 Image::Image(int h, int w)
  {
      this->height = h;
      this->width = w;
-     this->size = this->height*this->width*3;
+     this->size = (this->height*(this->width+1))*3;
      pixels = new float[size];
+}
+
+float adaptColor(char c) {
+    float orig = (float)c;
+    float color =  orig / (float)127 ;
+    if(color < 0)
+        color = 1-color;
+                     
+    return color;
+}
+
+Image::Image(char * path) {
+    Bitmap bmp(path);
+    long size = bmp.height * (bmp.width+1) * 3;
+    pixels = new float[size];
+    this->height = bmp.height;
+    this->width = bmp.width;
+
+    int offset=bmp.padWidth-bmp.byteWidth;
+    //count backwards so you start at the front of the image
+    for(int i=0;i<bmp.dataSize;i+=3) {
+        //jump over the padding at the start of a new line
+        if(((i+1)%bmp.padWidth)==0) {
+            i+=offset;
+        }
+        //transfer the data
+        pixels[i] = adaptColor(bmp.data[i]);
+        pixels[i+1] = adaptColor(bmp.data[i+1]);
+        pixels[i+2] = adaptColor(bmp.data[i+2]);
+    }
+    
 }
 
 Image::~Image() {
      delete [] pixels;
 }
 void Image::setPixel(int px, int py ,float r,float g, float b) {
-     int index = (py*width + px)*3;
+     int index = (py*(width) + px)*3;
      pixels[index] = r;
      pixels[index+1] = g;
      pixels[index+2] = b;
@@ -48,7 +81,7 @@ void Image::replacePixels(Image img){
 }
 
 float Image::getPixel(int px, int py, int color) {
-      long index = (py*width + px)*3 + color;
+      long index = (py*(width) + px)*3 + color;
       return pixels[index];
 }
 
@@ -78,42 +111,10 @@ void Image::draw(int x, int y) {
     glMatrixMode(GL_MODELVIEW); 
     glLoadIdentity(); 
   
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+ // glPixelStorei(GL_PACK_ALIGNMENT, 8);
   
     glRasterPos2f(x, this->height);
     glDrawPixels(this->width+1,this->height,GL_RGB,GL_FLOAT,this->pixels);
-}
-
-float adaptColor(char c) {
-    float orig = (float)c;
-    float color =  orig / (float)127 ;
-    if(color < 0)
-        color = 1-color;
-                     
-    return color;
-}
-
-
-Image::Image(char * path) {
-    Bitmap bmp(path);
-    long size = bmp.height * bmp.width * 3;
-    pixels = new float[size];
-    this->height = bmp.height;
-    this->width = bmp.width;
-
-    int offset=bmp.padWidth-bmp.byteWidth;
-    //count backwards so you start at the front of the image
-    for(int i=0;i<bmp.dataSize;i+=3) {
-        //jump over the padding at the start of a new line
-        if(((i+1)%bmp.padWidth)==0) {
-            i+=offset;
-        }
-        //transfer the data
-        pixels[i] = adaptColor(bmp.data[i]);
-        pixels[i+1] = adaptColor(bmp.data[i+1]);
-        pixels[i+2] = adaptColor(bmp.data[i+2]);
-    }
-    
 }
 
 Image Image::applyFilter(int radix, int *map){
@@ -298,7 +299,7 @@ Image Image::decreaseHeight(int neww){
 
 Image Image::invert(){
      
-     Image nova(height,width);
+     /*Image nova(height,width);
      
      for(int countY = 0; countY < height; countY++){
             for(int countX = 0; countX < width; countX++){
@@ -313,11 +314,17 @@ Image Image::invert(){
       }
      
     return nova;
+    */
+    float map[] =  { -1,  0,  0, 1, 
+                      0, -1,  0, 1,
+                      0,  0, -1, 1
+                     };
+    return colorFilter(map);
 }
 
 Image Image::grayscale(){
      
-     Image nova(height,width);
+     /*Image nova(height,width);
      
      for(int countY = 0; countY < height; countY++){
             for(int countX = 0; countX < width; countX++){
@@ -334,11 +341,18 @@ Image Image::grayscale(){
       }
      
     return nova;
+    */
+    
+    float map[] =  { .33, .33, .33, 0, 
+                     .33, .33, .33, 0,
+                     .33, .33, .33, 0
+                     };
+    return colorFilter(map);
 }
 
 Image Image::sepia(){
      
-     Image nova(height,width);
+     /*Image nova(height,width);
      
      for(int countY = 0; countY < height; countY++){
             for(int countX = 0; countX < width; countX++){
@@ -350,6 +364,37 @@ Image Image::sepia(){
                     float nR = (R * .393) + (G *.769) + (B * .189);
                     float nG = (R * .349) + (G *.686) + (B * .168);
                     float nB = (R * .272) + (G *.534) + (B * .131);
+                   
+
+                    nova.setPixel(countX, countY, nR, nG, nB);
+            }
+            
+      }
+     
+    return nova;
+    */
+    float map[] =  { .393, .769, .189, 0, 
+                     .349, .686, .168, 0,
+                     .272, .534, .131, 0
+                     };
+    return colorFilter(map);
+}
+
+Image Image::colorFilter(float *map){
+     
+     Image nova(height,width);
+     
+     for(int countY = 0; countY < height; countY++){
+            for(int countX = 0; countX < width; countX++){
+                    float R = 0,  G = 0, B = 0;
+                    R = getPixelR(countX,countY);
+                    G = getPixelG(countX,countY);
+                    B = getPixelB(countX,countY);
+                    
+                    float nR = (R * map[0]) + (G * map[1]) + (B * map[ 2]) + map[ 3];
+                    float nG = (R * map[4]) + (G * map[5]) + (B * map[ 6]) + map[ 7];
+                    float nB = (R * map[8]) + (G * map[9]) + (B * map[10]) + map[11];
+                   
 
                     nova.setPixel(countX, countY, nR, nG, nB);
             }
@@ -358,3 +403,70 @@ Image Image::sepia(){
      
     return nova;
 }
+
+Image Image::swap(){
+    float map[] =  { -1.1, 0, 0, 2, 
+                     0, -1.1, 0, 2,
+                     0, 0, -1.1, 2
+                     };
+    return colorFilter(map);
+}
+
+ Image Image::Degrade(float r, float g, float b, int d)
+        {
+            Image degrade(height,width);
+            float i = 1.0/(float)d;
+            for (int countY = 0; countY < height; countY++)
+            {
+                float count = 1.0;
+                for (int countX = 0; countX < width; countX++)
+                {
+                    
+                    float R = getPixelR(countX,countY);
+                    float G = getPixelG(countX,countY);
+                    float B = getPixelB(countX,countY);
+                    
+                    if(countX <= d) {
+                              R = (count * r) + ((1-count)*R);
+                              G = (count * g) + ((1-count)*G);
+                              B = (count * b) + ((1-count)*B);
+                    
+                    }
+                    degrade.setPixel(countX, countY, R, G, B);     
+                    count = count - i;
+
+                    }
+                     
+                    
+            }
+            return degrade;
+        }
+        
+Image Image::applyRotate(float ang) {
+     
+     Image nova(height,width);
+     
+     // Converte ang para radianos
+     float a = (ang * M_PI) / 180.0;
+     
+     for(int countY = 0; countY < height; countY++){
+            for(int countX = 0; countX < width; countX++){
+                    
+                    float R = getPixelR(countX,countY);
+                    float G = getPixelG(countX,countY);
+                    float B = getPixelB(countX,countY);
+                    
+                    //x'= x* cos a - y* sin a
+                    //y'= x* sin a + y* cos a
+                    
+                    int nx = (int)(((float)countX * cos(a)) - ((float)countY * sin(a)));
+                    int ny = (int)(((float)countX * sin(a)) + ((float)countY * cos(a)));
+                    
+                    if(nx >= 0 && ny >= 0 && nx <= width && ny <= height)                
+                                        nova.setPixel(nx, ny, R, G, B);
+            }
+      }
+      
+      return nova;
+}
+  

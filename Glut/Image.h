@@ -51,6 +51,10 @@ using namespace std;
       Image invert();
       Image grayscale();
       Image sepia();
+      Image colorFilter(float *map);
+      Image swap();
+      Image Degrade(float r, float g, float b, int d);
+      Image applyRotate(float ang);
    };
 
 

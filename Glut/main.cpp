@@ -31,17 +31,23 @@ static void display(void)
     //Image i2 = img.grayscale(); 
     //i2.draw(240, 0);  
     
-    //Image i3 = img.invert();
+    //Image i3 = img.swap();
     //i3.draw(480,0);      
     
     //Image i4 = img.sepia();
     //i4.draw(480,0);
     
-    Image i5 = img.blur();
-    i5.draw(240,0);
+    //Image i5 = img.blur();
+    //i5.draw(240,0);
     
     Image i6 = img.sharpen();
     i6.draw(480,0);
+    
+    
+    //Image i6 = img.Degrade(0.3,0.5,0.7, 80);
+    //Image i6 = img.applyRotate(25);
+    //Image i6 = img.resize(1200,354);
+    //i6.draw(200,0);
     
     glutSwapBuffers();
 }
