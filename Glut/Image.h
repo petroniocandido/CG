@@ -27,6 +27,7 @@ using namespace std;
       float *pixels; 
       int height, width, size;
       void replacePixels(Image img);
+      int calcIndex(int px, int py);
    public:
       float getPixel(int x, int y, int color);
       Image increaseWidth(int dw);

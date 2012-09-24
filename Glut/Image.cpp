@@ -63,16 +63,8 @@ Image::Image(char * path) {
         pixels[i+2] = adaptColor(bmp.data[i+2]);
     }
     
-}
-
-Image::~Image() {
-     delete [] pixels;
-}
-void Image::setPixel(int px, int py ,float r,float g, float b) {
-     int index = (py*(width) + px)*3;
-     pixels[index] = r;
-     pixels[index+1] = g;
-     pixels[index+2] = b;
+    cout << "Imagem carregada!" << endl;
+    
 }
 
 void Image::replacePixels(Image img){
@@ -80,8 +72,27 @@ void Image::replacePixels(Image img){
 
 }
 
+Image::~Image() {
+     delete [] pixels;
+}
+
+int Image::calcIndex(int px, int py){
+    int index = (py*width + px)*3;
+     //if(px == 0 /*&& py != 0*/) {
+           index = index + py*3;
+     //}
+    return index;
+}
+
+void Image::setPixel(int px, int py ,float r,float g, float b) {
+     int index = calcIndex(px, py);
+     pixels[index] = r;
+     pixels[index+1] = g;
+     pixels[index+2] = b;
+}
+
 float Image::getPixel(int px, int py, int color) {
-      long index = (py*(width) + px)*3 + color;
+      int index = calcIndex(px, py) + color;
       return pixels[index];
 }
 
@@ -111,7 +122,10 @@ void Image::draw(int x, int y) {
     glMatrixMode(GL_MODELVIEW); 
     glLoadIdentity(); 
   
- // glPixelStorei(GL_PACK_ALIGNMENT, 8);
+  
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glPixelStorei(GL_PACK_ROW_LENGTH, this->width);
+  
   
     glRasterPos2f(x, this->height);
     glDrawPixels(this->width+1,this->height,GL_RGB,GL_FLOAT,this->pixels);
