@@ -30,7 +30,7 @@ Image::Image(int h, int w)
  {
      this->height = h;
      this->width = w;
-     this->size = (this->height*(this->width+1))*3;
+     this->size = ((this->height+1)*(this->width+1))*3;
      pixels = new float[size];
 }
 
@@ -45,10 +45,11 @@ float adaptColor(char c) {
 
 Image::Image(char * path) {
     Bitmap bmp(path);
-    long size = bmp.height * (bmp.width+1) * 3;
+    long size = (bmp.height+1) * (bmp.width+1) * 3;
     pixels = new float[size];
     this->height = bmp.height;
     this->width = bmp.width;
+    this->size = size;
 
     int offset=bmp.padWidth-bmp.byteWidth;
     //count backwards so you start at the front of the image
