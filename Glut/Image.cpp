@@ -420,9 +420,9 @@ Image Image::colorFilter(float *map){
 }
 
 Image Image::swap(){
-    float map[] =  { -1.1, 0, 0, 2, 
-                     0, -1.1, 0, 2,
-                     0, 0, -1.1, 2
+    float map[] =  { 0, 0, 0, 0, 
+                     0, 0, 0, 0,
+                     0, 0, 1, 0
                      };
     return colorFilter(map);
 }
@@ -474,8 +474,13 @@ Image Image::applyRotate(float ang) {
                     //x'= x* cos a - y* sin a
                     //y'= x* sin a + y* cos a
                     
-                    int nx = (int)(((float)countX * cos(a)) - ((float)countY * sin(a)));
-                    int ny = (int)(((float)countX * sin(a)) + ((float)countY * cos(a)));
+                    
+                    
+                    float fnx = ((countX * cos(a)) - (countY * sin(a)));
+                    float fny = ((countX * sin(a)) + (countY * cos(a)));
+                    
+                    int nx = (int)round(fnx);
+                    int ny = (int)round(fny);
                     
                     if(nx >= 0 && ny >= 0 && nx <= width && ny <= height)                
                                         nova.setPixel(nx, ny, R, G, B);

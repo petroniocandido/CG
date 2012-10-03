@@ -37,17 +37,18 @@ static void display(void)
     //Image i4 = img.sepia();
     //i4.draw(480,0);
     
-    //Image i5 = img.blur();
-    //i5.draw(240,0);
+    Image i5 = img.blur();
+    i5.draw(240,0);
     
-    //Image i6 = img.sharpen();
-    //i6.draw(480,0);
+    Image i6 = img.sharpen();
+    i6.draw(480,0);
     
     
     //Image i6 = img.Degrade(0.3,0.5,0.7, 80);
-    Image i6 = img.applyRotate(-45);
+    //Image i6 = img.applyRotate(-35);
     //Image i6 = img.resize(1200,354);
-    i6.draw(240,0);
+    //Image i6 = img.swap();
+    //i6.draw(240,0);
     
     glutSwapBuffers();
 }
